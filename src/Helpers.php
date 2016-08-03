@@ -68,7 +68,7 @@ class Helpers
         $arg = "";
         while (list ($key, $val) = each($para)) {
             if(is_array($val)) {
-                $val = json_encode($val);
+                $val = json_encode($val, true);
             }
             $arg .= $key . "=" . $val . "&";
         }
