@@ -36,7 +36,7 @@ class Helpers
     {
         $para_filter = array();
         while (list ($key, $val) = each($para)) {
-            if (strtolower(trim($key)) === "sign" || (!is_array($val) && trim($val) === ""))
+            if (strtolower(trim($key)) === "sign" || (!is_array($val) && trim($val) === "") || (is_array($val) && empty($val)))
                 continue;
             else
                 $para_filter[$key] = $para[$key];
@@ -67,6 +67,9 @@ class Helpers
     {
         $arg = "";
         while (list ($key, $val) = each($para)) {
+            if(is_array($val)) {
+                $val = json_encode($val);
+            }
             $arg .= $key . "=" . $val . "&";
         }
         // 去掉最后一个&字符
@@ -88,7 +91,6 @@ class Helpers
         }
         // 去掉最后一个&字符
         $arg = substr($arg, 0, strlen($arg) - 1);
-
         return $arg;
     }
 
