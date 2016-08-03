@@ -1,9 +1,13 @@
 {
+    "name": "lingxi/api-authentication",
+    "type": "private",
+    "license": "lingxi",
     "autoload": {
         "psr-4": {
             "Lingxi\\Signature\\": "src/"
         }
     },
+    "minimum-stability": "dev",
     "require": {
         "php": ">=5.6",
         "tightenco/collect": "^5.2"
