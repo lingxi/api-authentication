@@ -8,7 +8,8 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
 
     protected $authenticator;
 
-    protected $api_secret;
+    protected $api_key = '12';
+    protected $api_secret = '21';
 
     protected $signature;
 
@@ -16,54 +17,22 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
     {
         $this->data = [
             'cid'       => 12,
-            'stamp'     => time(),
+            'Stamp'     => time(),
             'noncestr'  => 'thisisademode',
-            'app_key'   => '121212'
+            'api_key'   => $this->api_key
         ];
 
-        $this->authenticator = new Authenticator;
+        $this->authenticator = new Authenticator($this->api_key, $this->api_secret);
     }
 
     public function test_it_can_pass_all()
     {
-        $this->setSecret('abc');
         $this->generateSignature();
 
         $this->data['signature'] = $this->signature;
-        $this->data['version'] = 'v1';
         $this->authenticator->api_secret = $this->api_secret;
 
         $this->assertTrue($this->authenticator->attempt($this->data));
-    }
-
-    /**
-     * @expectedException \Lingxi\Signature\Exceptions\ApiVersionException
-     */
-    public function test_it_throw_version_exception()
-    {
-        $this->setSecret('abc');
-        $this->generateSignature();
-
-        $this->data['signature'] = $this->signature;
-        $this->data['version'] = 'v2';
-
-        $this->authenticator->api_secret = $this->api_secret;
-
-        $this->authenticator->attempt($this->data);
-    }
-
-    /**
-     * @expectedException Lingxi\Signature\Exceptions\SignatureKeyException
-     */
-    public function test_it_throw_signature_key_not_exist_exception()
-    {
-        $this->setSecret('abc');
-        $this->generateSignature();
-
-        $this->data['signature'] = $this->signature;
-        $this->data['version'] = 'v1';
-
-        $this->authenticator->attempt($this->data);
     }
 
     /**
@@ -71,12 +40,37 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
      */
     public function test_it_throw_timestamp_exception()
     {
-        $this->setSecret('abc');
         $this->generateSignature();
 
         $this->data['signature'] = $this->signature;
-        $this->data['version'] = 'v1';
         $this->data['stamp'] = time() - 301;
+
+        $this->authenticator->attempt($this->data);
+    }
+
+    /**
+     * @expectedException \Lingxi\Signature\Exceptions\SignatureValueException
+     */
+    public function test_it_throw_signature_value_exception_when_secret_not_match()
+    {
+        $this->generateSignature();
+
+        $this->data['signature'] = $this->signature;
+
+        $this->authenticator->api_secret = $this->api_secret . '1212';
+
+        $this->authenticator->attempt($this->data);
+    }
+
+    /**
+     * @expectedException \Lingxi\Signature\Exceptions\SignatureValueException
+     */
+    public function test_it_throw_signature_value_exception_when_add_parameter()
+    {
+        $this->generateSignature();
+
+        $this->data['extra'] = 'some string';
+        $this->data['signature'] = $this->signature;
 
         $this->authenticator->api_secret = $this->api_secret;
 
@@ -86,27 +80,30 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \Lingxi\Signature\Exceptions\SignatureValueException
      */
-    public function test_it_throw_signature_value_exception()
+    public function test_it_throw_signature_value_exception_when_signature_not_match()
     {
-        $this->setSecret('abc');
         $this->generateSignature();
 
-        $this->data['signature'] = $this->signature;
-        $this->data['version'] = 'v1';
+        $this->data['signature'] = $this->signature . '!';
 
-        $this->authenticator->api_secret = $this->api_secret . '1212';
+        $this->authenticator->api_secret = $this->api_secret;
 
         $this->authenticator->attempt($this->data);
     }
 
-    public function setSecret($secret)
+    public function test_it_can_get_auth_parameters_and_verify_success()
     {
-        $this->api_secret = $secret;
+        $this->data = collect($this->data)->only('cid')->toArray();
+
+        $parameters = $this->authenticator->getAuthParams($this->data);
+
+        $this->assertTrue($this->authenticator->verify($parameters));
     }
 
-    public function generateSignature()
+    private function generateSignature()
     {
-        natsort($this->data);
+        $this->data = array_change_key_case($this->data, CASE_LOWER);
+        ksort($this->data, SORT_STRING);
 
         $this->signature = hash_hmac("sha256", http_build_query($this->data), $this->api_secret);;
     }
