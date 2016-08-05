@@ -15,7 +15,7 @@ class TimestampChecker implements CheckerInterface
             $now = time();
         }
 
-        if ($now - $timestamp > self::TIME_EXPIRED) {
+        if ($now - $timestamp < 0 || ($now - $timestamp > self::TIME_EXPIRED)) {
             throw new SignatureTimestampException('请求时间戳过期');
         }
 

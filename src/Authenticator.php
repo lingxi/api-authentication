@@ -40,7 +40,7 @@ class Authenticator implements AuthenticatorInterface
 
     public function getSignatureValue($params)
     {
-        $paramsString = http_build_query($this->handleAllSignatureParamaters($params));
+        $paramsString = urldecode(http_build_query($this->handleAllSignatureParamaters($params)));
 
         return hash_hmac('sha256', $paramsString, $this->getSignatureApiSecret());
     }
@@ -54,7 +54,11 @@ class Authenticator implements AuthenticatorInterface
 
     protected function handleAllSignatureParamaters($params)
     {
-        $params = collect($params)->except(['signature'])->toArray();
+        $params = collect($params)
+            ->filter(function ($item, $key) {
+                return ! in_array($key, ['signature']) && $item;
+            })
+            ->toArray();
 
         $params = array_change_key_case($params, CASE_LOWER);
         ksort($params, SORT_STRING);
