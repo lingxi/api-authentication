@@ -56,7 +56,7 @@ class Authenticator implements AuthenticatorInterface
     {
         $params = collect($params)
             ->filter(function ($item, $key) {
-                return ! in_array($key, ['signature']) && $item;
+                return ! in_array($key, ['signature']) && $item !== '';
             })
             ->toArray();
 
@@ -108,6 +108,7 @@ class Authenticator implements AuthenticatorInterface
         $paraFilter = Helpers::argSort($paraFilter);
         // 进行URL键值对的格式拼接成字符串string1
         $str = Helpers::createLinkstring($paraFilter);
+        echo $str . PHP_EOL;
         /**
          * b. 在string1 最后拼接上key=Key(商户支付密钥 ) 得到stringSignTemp 字符串，
          * 并对stringSignTemp 进行md5 运算，再将得到的字符串所有字符转换为大写，得到sign 值signValue。
