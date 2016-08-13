@@ -7,7 +7,7 @@ use Lingxi\Signature\Exceptions\SignatureTimestampException;
 
 class TimestampChecker implements CheckerInterface
 {
-    const TIME_EXPIRED = 300;
+    const TIME_EXPIRED = 3000;
 
     public static function check($timestamp, $now = null)
     {
