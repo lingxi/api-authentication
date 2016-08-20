@@ -35,17 +35,11 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->authenticator->attempt($this->data));
     }
 
-    /**
-     * @expectedException \Lingxi\Signature\Exceptions\SignatureTimestampException
-     */
-    public function test_it_throw_timestamp_exception()
+    public function test_verify_work_well()
     {
-        $this->generateSignature();
+        $parameters = $this->authenticator->getAuthParams([]);
 
-        $this->data['signature'] = $this->signature;
-        $this->data['stamp'] = time() - 301;
-
-        $this->authenticator->attempt($this->data);
+        $this->assertTrue($this->authenticator->verify($parameters));
     }
 
     /**

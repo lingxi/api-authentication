@@ -1,6 +1,7 @@
 <?php
 
 namespace Lingxi\Signature;
+
 /**
  * Defines a few helper methods.
  *
@@ -8,7 +9,6 @@ namespace Lingxi\Signature;
  */
 class Helpers
 {
-
     /**
      * 检测一个字符串否为Json字符串
      *

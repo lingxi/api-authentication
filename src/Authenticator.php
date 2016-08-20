@@ -66,7 +66,7 @@ class Authenticator implements AuthenticatorInterface
         return $params;
     }
 
-    public function getAuthParams($params){
+    public function getAuthParams($params) {
         $noncestr = Helpers::createNonceStr();
 
         $params['stamp'] = time();
@@ -79,7 +79,7 @@ class Authenticator implements AuthenticatorInterface
         return $params;
     }
 
-    public function verify($params){
+    public function verify($params) {
         $need_to_check_sign = $params['signature'];
         unset($params["signature"]);
 

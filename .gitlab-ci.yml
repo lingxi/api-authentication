@@ -1,0 +1,12 @@
+cache:
+    untracked: true
+
+stages:
+    - test
+
+test:
+    stage: test
+    script:
+      - php -v
+      - composer install -o
+      - phpunit --coverage-text --colors=never
