@@ -8,5 +8,6 @@ test:
     stage: test
     script:
       - php -v
+      - rm -rf vendor
       - composer install -o
       - phpunit --coverage-text --colors=never
