@@ -67,8 +67,6 @@ class Authenticator implements AuthenticatorInterface
     }
 
     public function getAuthParams($params) {
-        $noncestr = Helpers::createNonceStr();
-
         $params['stamp'] = time();
         $params['noncestr'] = Helpers::createNonceStr();
         $params['api_key'] = $this->api_key;
