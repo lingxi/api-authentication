@@ -40,9 +40,9 @@ class Authenticator implements AuthenticatorInterface
 
     public function getSignatureValue($params)
     {
-        $paramsString = urldecode(http_build_query($this->handleAllSignatureParamaters($params)));
+        unset($params["signature"]);
 
-        return hash_hmac('sha256', $paramsString, $this->getSignatureApiSecret());
+        return $this->genSign($params);
     }
 
     protected function getSignatureApiSecret()
