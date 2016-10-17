@@ -36,7 +36,7 @@ class Helpers
     {
         $para_filter = array();
         while (list ($key, $val) = each($para)) {
-            if (strtolower(trim($key)) === "sign" || (!is_array($val) && trim($val) === "") || (is_array($val) && empty($val)))
+            if (strtolower(trim($key)) === "signature" || (!is_array($val) && trim($val) === "") || (is_array($val) && empty($val)))
                 continue;
             else
                 $para_filter[$key] = $para[$key];
