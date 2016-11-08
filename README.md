@@ -3,7 +3,6 @@
 ### Install
 
 ```bash
-<<<<<<< HEAD
 composer require lingxi/api-authentication
 ```
 
