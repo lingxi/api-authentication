@@ -37,8 +37,6 @@ class Client
         $gateway = 'http://apix.lingxi360.com',
         $timeOut = 3.0
     ) {
-        $gateway = ($gateway ?: $this->getGateWay()) . '/' . $this->version . '/';
-
         $this->http = new GuzzleHttpClient([
             'base_uri' => $gateway,
             'time_out' => $timeOut,
@@ -96,23 +94,28 @@ class Client
      * Make request
      */
 
+    protected function addVersionPrefix($api)
+    {
+        return '/' . $this->version . $api;
+    }
+
     public function get($api, $params = [])
     {
-        $response = $this->http->get($api, ['query' => $this->combineParams($params)]);
+        $response = $this->http->get($this->addVersionPrefix($api), ['query' => $this->combineParams($params)]);
 
         return $this->dealResponse($response);
     }
 
     public function post($api, $params = [])
     {
-        $response = $this->http->post($api, ['form_params' => $this->combineParams($params)]);
+        $response = $this->http->post($this->addVersionPrefix($api), ['form_params' => $this->combineParams($params)]);
 
         return $this->dealResponse($response);
     }
 
     public function put($api, $params = [])
     {
-        $response = $this->http->put($api, ['form_params' => $this->combineParams($params)]);
+        $response = $this->http->put($this->addVersionPrefix($api), ['form_params' => $this->combineParams($params)]);
 
         return $this->dealResponse($response);
     }
