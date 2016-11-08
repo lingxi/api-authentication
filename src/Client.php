@@ -16,6 +16,9 @@ use Lingxi\Signature\Authenticator;
  */
 class Client
 {
+    const MODE_API_KEY = 'api_key';
+    const MODE_PARTNER = 'partner_key';
+
     protected $http;
     protected $authenticator;
 
@@ -31,6 +34,7 @@ class Client
         $apiKey = null,
         $apiSecret = null,
         $gateway = null,
+        $mode = self::MODE_API_KEY,
         $timeOut = 3.0
     ) {
         $gateway = ($gateway ?: $this->getGateWay()) . '/' . $this->version . '/';
@@ -43,7 +47,7 @@ class Client
             },
         ]);
 
-        $this->authenticator = new Authenticator($apiKey, $apiSecret);
+        $this->authenticator = new Authenticator($apiKey, $apiSecret, $mode);
     }
 
     protected function combineParams($params)
