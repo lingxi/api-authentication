@@ -33,8 +33,8 @@ class Client
     public function __construct(
         $apiKey = null,
         $apiSecret = null,
-        $gateway = null,
         $mode = self::MODE_API_KEY,
+        $gateway = 'http://apix.lingxi360.com',
         $timeOut = 3.0
     ) {
         $gateway = ($gateway ?: $this->getGateWay()) . '/' . $this->version . '/';
