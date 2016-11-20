@@ -1,11 +1,13 @@
 <?php
 
-namespace Lingxi\Signature;
+namespace home\rry\code\opensource\api-authentication\src;
 
 use Exception;
-use GuzzleHttp\Client as GuzzleHttpClient;
 use GuzzleHttp\TransferStats;
+use InvalidArgumentException;
+use Illuminate\Support\Collection;
 use Lingxi\Signature\Authenticator;
+use GuzzleHttp\Client as GuzzleHttpClient;
 
 /**
  * Api Client
@@ -28,7 +30,7 @@ class Client
 
     protected $orderBy       = null;
     protected $orderSequence = null;
-    protected $effectiveUrl  = '';
+    protected $requestUrls  = [];
 
     public function __construct(
         $apiKey = null,
@@ -41,7 +43,7 @@ class Client
             'base_uri' => $gateway,
             'time_out' => $timeOut,
             'on_stats' => function (TransferStats $stats) {
-                $this->effectiveUrl = $stats->getEffectiveUri()->__toString();
+                $this->requestUrls[] = $stats->getEffectiveUri()->__toString();
             },
         ]);
 
@@ -66,76 +68,65 @@ class Client
         $this->orderBy = $this->orderSequence = null;
     }
 
-    private function dealResponse($response)
-    {
-        if ($response->getStatusCode() !== 200) {
-            throw new Exception('Lingxi Api Response Status Is Not 200');
-        }
-
-        if (!$data = json_decode($response->getBody(), true)) {
-            throw new Exception('Lingxi Api return null');
-        }
-
-        if (isset($data['status_code']) && $data['status_code'] >= 10000) {
-            throw new Exception('Lingxi Api return error: ' . $data['error']);
-        }
-
-        $this->responseData = collect($data);
-
-        return $this;
-    }
-
     public function getEffectiveUrl()
     {
-        return $this->effectiveUrl;
+        return $this->requestUrls[count($this->requestUrls) - 1];
     }
 
-    /**
-     * Make request
-     */
-
-    protected function addVersionPrefix($api)
+    public function getRequestUrls()
     {
-        return '/' . $this->version . $api;
+        return $this->requestUrls;
     }
 
     public function get($api, $params = [])
     {
-        $response = $this->http->get($this->addVersionPrefix($api), ['query' => $this->combineParams($params)]);
-
-        return $this->dealResponse($response);
+        return $this->call('get', $api, $params);
     }
 
     public function post($api, $params = [])
     {
-        $response = $this->http->post($this->addVersionPrefix($api), ['form_params' => $this->combineParams($params)]);
-
-        return $this->dealResponse($response);
+        return $this->call('post', $api, $params);
     }
 
     public function put($api, $params = [])
     {
-        $response = $this->http->put($this->addVersionPrefix($api), ['form_params' => $this->combineParams($params)]);
-
-        return $this->dealResponse($response);
+        return $this->call('put', $api, $params);
     }
 
-    /**
-     * Order utility
-     */
-
-    public function order($by, $sequence = 'desc')
+    public function patch($api, $params = [])
     {
-        $this->orderBy       = $by;
-        $this->orderSequence = $sequence;
+        return $this->call('patch', $api, $params);
+    }
 
-        return $this;
+    public function delete($api, $params = [])
+    {
+        return $this->call('delete', $api, $params);
+    }
+
+    public function call($method, $api, $params = [])
+    {
+        if (! in_array($method, ['get', 'post', 'put', 'patch', 'delete'])) {
+            throw new InvalidArgumentException($method . ' not available.');
+        }
+
+        if ($method == 'get') {
+            $key = 'query';
+        } else {
+            $key = 'form_params';
+        }
+
+        $response = $this->http->{$method}(
+            this->addVersionPrefix($api), [
+                $key => $this->combineParams($params),
+            ]
+        );
+
+        return $this->dealResponse($response);
     }
 
     /**
      * Get reqponse data
      */
-
     public function getResponseData()
     {
         return $this->responseData;
@@ -158,11 +149,46 @@ class Client
      */
     public function getItem()
     {
-        return collect(array_merge(['id' => $this->data['id']], $this->data['attributes']));
+        return new Collection(array_merge(['id' => $this->data['id']], $this->data['attributes']));
+    }
+
+    /**
+     * Order utility
+     */
+    public function order($by, $sequence = 'desc')
+    {
+        $this->orderBy       = $by;
+        $this->orderSequence = $sequence;
+
+        return $this;
     }
 
     public function __get($name)
     {
-        return collect($this->responseData->get($name));
+        return new Collection($this->responseData->get($name));
+    }
+
+    protected function addVersionPrefix($api)
+    {
+        return '/' . $this->version . $api;
+    }
+
+    private function dealResponse($response)
+    {
+        if ($response->getStatusCode() !== 200) {
+            throw new Exception('Lingxi Api Response Status Is Not 200');
+        }
+
+        if (!$data = json_decode($response->getBody(), true)) {
+            throw new Exception('Lingxi Api return null');
+        }
+
+        if (isset($data['status_code']) && $data['status_code'] >= 10000) {
+            throw new Exception('Lingxi Api return error: ' . $data['error']);
+        }
+
+        $this->responseData = collect($data);
+
+        return $this;
     }
 }
