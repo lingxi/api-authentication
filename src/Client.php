@@ -1,6 +1,6 @@
 <?php
 
-namespace Linxgi\Signature;
+namespace Lingxi\Signature;
 
 use Exception;
 use GuzzleHttp\TransferStats;
