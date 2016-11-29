@@ -167,6 +167,11 @@ class Client
     {
         return new Collection($this->responseData->get($name));
     }
+    
+    public function setVersion($version)
+    {
+        $this->version = $version;
+    }
 
     protected function addVersionPrefix($api)
     {
