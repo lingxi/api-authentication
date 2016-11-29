@@ -1,6 +1,6 @@
 <?php
 
-namespace home\rry\code\opensource\api-authentication\src;
+namespace Linxgi\Signature;
 
 use Exception;
 use GuzzleHttp\TransferStats;
@@ -116,7 +116,7 @@ class Client
         }
 
         $response = $this->http->{$method}(
-            this->addVersionPrefix($api), [
+            $this->addVersionPrefix($api), [
                 $key => $this->combineParams($params),
             ]
         );
