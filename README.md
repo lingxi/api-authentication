@@ -34,19 +34,19 @@ $apiClient = new Client(
 
 try {
     $response = $apiClient->order('id', 'asc')->get('/contact/show');
+    
+    // get response data
+    $data = $response->getResponseData();
+
+    // 大部分接口，response data 包含 data 和 meta 两部分，可以：
+    $data = $response->getData();
+    $meta = $response->getMeta();
+
+    // 也支持作为对象属性获取
+    $data = $response->data;
+    $meta = $response->meta;
 } catch (\Exception $e) {
     // deal with it...
 }
-
-// get response data
-$data = $response->getResponseData();
-
-// 大部分接口，response data 包含 data 和 meta 两部分，可以：
-$data = $response->getData();
-$meta = $response->getMeta();
-
-// 也支持作为对象属性获取
-$data = $response->data;
-$meta = $response->meta;
 ```
 
