@@ -16,3 +16,4 @@ log.txt
 logs
 .idea
 .vscode
+composer.lock
