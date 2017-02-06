@@ -30,7 +30,7 @@ class Helpers
      * 除去数组中的空值和签名参数
      *
      * @param $para 签名参数组
-     *            return 去掉空值与签名参数后的新签名参数组
+     * @return 去掉空值,null与签名参数后的新签名参数组
      */
     public static function paraFilter($para)
     {
