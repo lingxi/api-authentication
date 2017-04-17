@@ -71,25 +71,12 @@ class Helpers
         while (list ($key, $val) = each($para)) {
             if(is_array($val)) {
                 $val = json_encode($val);
+            } elseif (is_integer($val)) {
+                $val = (string) $val;
+            } elseif (is_bool($val)) {
+                $val = (string) ((int) $val);
             }
             $arg .= $key . "=" . $val . "&";
-        }
-        // 去掉最后一个&字符
-        $arg = substr($arg, 0, strlen($arg) - 1);
-        return $arg;
-    }
-
-    /**
-     * 把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串，并对字符串做urlencode编码
-     *
-     * @param $para 需要拼接的数组
-     *            return 拼接完成以后的字符串
-     */
-    public static function createLinkstringUrlencode($para)
-    {
-        $arg = "";
-        while (list ($key, $val) = each($para)) {
-            $arg .= $key . "=" . rawurlencode($val) . "&";
         }
         // 去掉最后一个&字符
         $arg = substr($arg, 0, strlen($arg) - 1);

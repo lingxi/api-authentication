@@ -17,6 +17,14 @@ class HelpersTest extends PHPUnit_Framework_TestCase
             'name' => '灵析'
         ];
 
-        $this->assertEquals(Helpers::createLinkstringUrlencode($data), http_build_query($data));
+        $this->assertEquals(Helpers::createLinkstring($data), 'name=灵析');
+
+        $data = [
+            'name' => '灵析',
+            'bool' => false,
+            'int' => 100,
+        ];
+
+        $this->assertEquals(Helpers::createLinkstring($data), 'name=灵析&bool=0&int=100');
     }
 }
