@@ -98,4 +98,17 @@ class Helpers
         }
         return $str;
     }
+
+    public static function toStringArray($params)
+    {
+        return array_map(function ($item) {
+            if (is_array($item)) {
+                return static::toStringArray($item);
+            } elseif (is_bool($item)) {
+                return (string) ((int) $item);
+            } else {
+                return (string) $item;
+            }
+        }, $params);
+    }
 }

@@ -66,13 +66,7 @@ class Authenticator implements AuthenticatorInterface
     }
 
     public function getAuthParams($params) {
-        foreach ($params as $key => $value) {
-            if (is_integer($value)) {
-                $params[$key] = (string) $value;
-            } elseif (is_bool($value)) {
-                $params[$key] = (string) ((int) $value);
-            }
-        }
+        $params = Helpers::toStringArray($params);
 
         $params['stamp'] = time();
         $params['noncestr'] = Helpers::createNonceStr();
