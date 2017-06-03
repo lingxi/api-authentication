@@ -36,7 +36,7 @@ class Client
         $apiKey = null,
         $apiSecret = null,
         $mode = self::MODE_API_KEY,
-        $gateway = 'http://apix.lingxi360.com',
+        $gateway = 'http://api.lingxi360.com',
         $timeOut = 3.0
     ) {
         $this->http = new GuzzleHttpClient([
