@@ -59,6 +59,17 @@ class Helpers
         return $para;
     }
 
+    public static function trimValue($para)
+    {
+        return array_map(function ($item) {
+            if (is_array($item)) {
+                return to_trim_string($item);
+            } else {
+                return trim((string)$item);
+            }
+        }, $para); 
+    }
+
     /**
      * 把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
      *
@@ -67,6 +78,8 @@ class Helpers
      */
     public static function createLinkstring($para)
     {
+        $para = static::trimValue($para);
+
         $arg = "";
         while (list ($key, $val) = each($para)) {
             if(is_array($val)) {
