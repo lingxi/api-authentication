@@ -1,7 +1,6 @@
 {
     "name": "lingxi/api-authentication",
     "type": "private",
-    "license": "lingxi",
     "autoload": {
         "psr-4": {
             "Lingxi\\Signature\\": "src/"
