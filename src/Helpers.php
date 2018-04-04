@@ -35,7 +35,7 @@ class Helpers
     public static function paraFilter($para)
     {
         $para_filter = array();
-        while (list ($key, $val) = each($para)) {
+        foreach($para as $key => $val) {
             if (strtolower(trim($key)) === "signature"
                 || (!is_array($val) && (trim($val) === "" || $val === null))
                 || (is_array($val) && empty($val)))
@@ -70,7 +70,7 @@ class Helpers
         $para = static::toStringArray($para);
 
         $arg = "";
-        while (list ($key, $val) = each($para)) {
+        foreach($para as $key => $val) {
             if(is_array($val)) {
                 $val = json_encode($val);
             } elseif (is_integer($val)) {
