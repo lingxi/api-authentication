@@ -189,7 +189,7 @@ class Client
         }
 
         if (isset($data['status_code']) && $data['status_code'] >= 10000) {
-            throw new Exception('Lingxi Api return error: ' . $data['error']);
+            throw new Exception('Lingxi Api return error: ' . $data['error'], $data['status_code']);
         }
 
         $this->responseData = collect($data);
